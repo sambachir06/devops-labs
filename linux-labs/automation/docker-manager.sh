@@ -8,20 +8,36 @@ then
   exit 1
 fi
 
-if [ "$action" = "start" ]
-then
-  docker start $(docker ps -aq)
-  echo "All containers started"
+case "$action" in
+  start)
+    containers=$(docker ps -aq)
 
-elif [ "$action" = "stop" ]
-then
-  docker stop $(docker ps -q)
-  echo "All running containers stopped"
+    if [ -z "$containers" ]
+    then
+      echo "No containers to start"
+    else
+      docker start $containers
+      echo "All containers started"
+    fi
+    ;;
 
-elif [ "$action" = "status" ]
-then
-  docker ps
+  stop)
+    containers=$(docker ps -q)
 
-else
-  echo "Invalid option. Use start, stop, or status."
-fi
+    if [ -z "$containers" ]
+    then
+      echo "No running containers to stop"
+    else
+      docker stop $containers
+      echo "All running containers stopped"
+    fi
+    ;;
+
+  status)
+    docker ps
+    ;;
+
+  *)
+    echo "Invalid option. Use start, stop, or status."
+    ;;
+esac
