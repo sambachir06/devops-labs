@@ -1,0 +1,14 @@
+services:
+  web:
+    image: nginx
+    ports:
+      - "8083:80"
+
+  db:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    volumes:
+      - db_data:/var/lib/mysql
+volumes:
+ db_data:
