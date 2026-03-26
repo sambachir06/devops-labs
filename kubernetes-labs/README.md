@@ -1,5 +1,7 @@
 # Kubernetes Lab — Deployment, Service, and ConfigMap
 
+(Updated version)
+
 ## Overview
 
 This lab demonstrates how to deploy a scalable nginx application on Kubernetes using:
