@@ -1,6 +1,4 @@
-# Kubernetes Lab — Deployment, Service, and ConfigMap
-
-(Updated version)
+## Kubernetes Lab — Deployment, Service, and ConfigMap
 
 ## Overview
 
@@ -12,35 +10,30 @@ This lab demonstrates how to deploy a scalable nginx application on Kubernetes u
 
 ---
 
-## Concepts Covered
-
-### 1. Deployment
-
-Manages application Pods and ensures:
-
-* Desired number of replicas are running
-* Automatic recovery if a Pod fails
-* Rolling updates
-
-### 2. Service (NodePort)
-
-Provides network access to the application:
-
-* Exposes Pods externally
-* Load balances traffic across Pods
-
-### 3. ConfigMap
-
-Stores configuration outside the container:
-
-* Injected into Pods
-* Used to dynamically update application behavior
-
----
-
 ## Architecture
 
 User → Service (NodePort) → Load Balancer → Pods (nginx)
+
+---
+
+## Concepts Covered
+
+### Deployment
+
+* Maintains desired number of Pods
+* Automatically recreates failed Pods
+* Supports rolling updates
+
+### Service (NodePort)
+
+* Exposes application externally
+* Distributes traffic across Pods
+
+### ConfigMap
+
+* Stores configuration outside containers
+* Injects data into Pods
+* Enables dynamic updates without rebuilding images
 
 ---
 
@@ -48,36 +41,34 @@ User → Service (NodePort) → Load Balancer → Pods (nginx)
 
 ### 1. Create Deployment
 
-* 3 replicas of nginx Pods
-* Managed by Kubernetes Deployment
+* 3 nginx Pods
+* Managed by Kubernetes
 
 ### 2. Expose Service
 
-* NodePort service created
+* NodePort created
 * Accessible via browser
 
 ### 3. Create ConfigMap
 
-* Stores custom HTML content
+* Stores custom HTML response
 
 ### 4. Mount ConfigMap
 
-* ConfigMap mounted as a file inside Pods
-* Replaces default nginx index.html
+* Overrides default nginx page
+* Ensures all Pods serve the same content
 
 ---
 
 ## Access Application
 
-Run:
-
-```
+```bash
 kubectl get services
 ```
 
 Open in browser:
 
-```
+```text
 http://localhost:<NodePort>
 ```
 
@@ -85,9 +76,9 @@ http://localhost:<NodePort>
 
 ## Result
 
-All Pods serve:
+All Pods return:
 
-```
+```text
 Hello from ConfigMap
 ```
 
@@ -95,9 +86,7 @@ Hello from ConfigMap
 
 ## Verification
 
-Test load balancing:
-
-```
+```bash
 for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
 ```
 
@@ -105,7 +94,7 @@ for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
 
 ## Cleanup
 
-```
+```bash
 kubectl delete -f nginx-deployment.yaml
 kubectl delete -f nginx-service.yaml
 kubectl delete -f nginx-config.yaml
@@ -117,17 +106,18 @@ kubectl delete -f nginx-config.yaml
 
 * Pods are ephemeral and independent
 * Services provide stable access and load balancing
-* ConfigMaps decouple configuration from application
+* ConfigMaps separate configuration from application
 * Manual changes inside Pods are not persistent
-* Kubernetes ensures desired state automatically
+* Kubernetes enforces desired state automatically
 
 ---
 
 ## Real DevOps Insight
 
-This lab demonstrates a production pattern:
+This lab reflects a real-world pattern:
 
-* Infrastructure is declarative (YAML)
-* Configuration is externalized (ConfigMap)
-* Applications are scalable and fault-tolerant
-* Changes are version-controlled via GitHub
+* Infrastructure defined as code (YAML)
+* Configuration externalized (ConfigMap)
+* Applications are scalable and resilient
+* Everything is version-controlled in GitHub
+
