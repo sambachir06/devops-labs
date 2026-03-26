@@ -1,110 +1,131 @@
-Kubernetes Lab — Deployment, Service, and ConfigMap
+# Kubernetes Lab — Deployment, Service, and ConfigMap
 
-Overview
+## Overview
 
 This lab demonstrates how to deploy a scalable nginx application on Kubernetes using:
 
-    - Deployment (to manage Pods)
-    - Service (to expose the application)
-    - ConfigMap (to manage configuration)
+* Deployment (to manage Pods)
+* Service (to expose the application)
+* ConfigMap (to manage configuration)
 
-Concepts Covered
+---
 
- 1 - Deployment
+## Concepts Covered
 
-    Manages application Pods and ensures:
+### 1. Deployment
 
-        - Desired number of replicas are running
-        - Automatic recovery if a Pod fails
-        - Rolling updates
+Manages application Pods and ensures:
 
-2 - Service (NodePort)
+* Desired number of replicas are running
+* Automatic recovery if a Pod fails
+* Rolling updates
 
-    Provides network access to the application:
+### 2. Service (NodePort)
 
-        - Exposes Pods externally
-        - Load balances traffic across Pods
+Provides network access to the application:
 
-3 - ConfigMap
+* Exposes Pods externally
+* Load balances traffic across Pods
 
-    Stores configuration outside the container:
+### 3. ConfigMap
 
-        - Injected into Pods
-        - Used to dynamically update application behavior
+Stores configuration outside the container:
 
-Architecture
+* Injected into Pods
+* Used to dynamically update application behavior
+
+---
+
+## Architecture
 
 User → Service (NodePort) → Load Balancer → Pods (nginx)
 
-Steps Performed
+---
 
-1. Create Deployment
+## Steps Performed
 
-        - 3 replicas of nginx Pods
-        - Managed by Kubernetes Deployment
+### 1. Create Deployment
 
-2. Expose Service
+* 3 replicas of nginx Pods
+* Managed by Kubernetes Deployment
 
-        - NodePort service created
-        - Accessible via browser
+### 2. Expose Service
 
-3. Create ConfigMap
+* NodePort service created
+* Accessible via browser
 
-        - Stores custom HTML content
+### 3. Create ConfigMap
 
-4. Mount ConfigMap
+* Stores custom HTML content
 
-        - ConfigMap mounted as a file inside Pods
-        - Replaces default nginx index.html
+### 4. Mount ConfigMap
 
-Access Application
+* ConfigMap mounted as a file inside Pods
+* Replaces default nginx index.html
 
-    - kubectl get services
+---
 
-    - Open in browser:
+## Access Application
 
-    - http://localhost:<NodePort>
+Run:
 
-Result
+```
+kubectl get services
+```
 
-    All Pods serve:
+Open in browser:
 
-    Hello from ConfigMap
+```
+http://localhost:<NodePort>
+```
 
-Verification
+---
 
-    Test load balancing:
+## Result
 
-    for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done 
+All Pods serve:
 
-Cleanup
+```
+Hello from ConfigMap
+```
 
-    kubectl delete -f nginx-deployment.yaml
+---
 
-    kubectl delete -f nginx-service.yaml
+## Verification
 
-    kubectl delete -f nginx-config.yaml
+Test load balancing:
 
-Key Learnings
+```
+for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
+```
 
-    - Pods are ephemeral and independent
+---
 
-    - Services provide stable access and load balancing
+## Cleanup
 
-    - ConfigMaps decouple configuration from application
+```
+kubectl delete -f nginx-deployment.yaml
+kubectl delete -f nginx-service.yaml
+kubectl delete -f nginx-config.yaml
+```
 
-    - Manual changes inside Pods are not persistent
+---
 
-    - Kubernetes ensures desired state automatically
+## Key Learnings
 
-Real DevOps Insight
+* Pods are ephemeral and independent
+* Services provide stable access and load balancing
+* ConfigMaps decouple configuration from application
+* Manual changes inside Pods are not persistent
+* Kubernetes ensures desired state automatically
 
-    This lab demonstrates a production pattern:
+---
 
-        - Infrastructure is declarative (YAML)
+## Real DevOps Insight
 
-        - Configuration is externalized (ConfigMap)
+This lab demonstrates a production pattern:
 
-        - Applications are scalable and fault-tolerant
-        
-        - Changes are version-controlled via GitHub
+* Infrastructure is declarative (YAML)
+* Configuration is externalized (ConfigMap)
+* Applications are scalable and fault-tolerant
+* Changes are version-controlled via GitHub
