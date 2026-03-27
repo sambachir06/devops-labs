@@ -1,106 +1,144 @@
-Kubernetes Lab — Deployment, Service, ConfigMap, and Secret
+# Kubernetes Lab — Deployment, Service, ConfigMap, and Secret
 
-Overview
+## Overview
 
 This lab demonstrates how to deploy a scalable nginx application on Kubernetes using:
-	•	Deployment (to manage Pods)
-	•	Service (to expose the application)
-	•	ConfigMap (to manage non-sensitive configuration)
-	•	Secret (to manage sensitive data)
 
-⸻
+- Deployment (to manage Pods)
+- Service (to expose the application)
+- ConfigMap (to manage non-sensitive configuration)
+- Secret (to manage sensitive data)
 
-Architecture
+---
+
+## Architecture
 
 User → Service (NodePort) → Load Balancer → Pods (nginx)
 
-⸻
+---
 
-Concepts Covered
+## Concepts Covered
 
-Deployment
-	•	Maintains desired number of Pods
-	•	Automatically recreates failed Pods
-	•	Supports rolling updates
+### Deployment
+- Maintains the desired number of Pods
+- Automatically recreates failed Pods
+- Supports rolling updates
 
-Service (NodePort)
-	•	Exposes application externally
-	•	Distributes traffic across Pods
+### Service (NodePort)
+- Exposes the application externally
+- Distributes traffic across Pods
 
-ConfigMap
-	•	Stores non-sensitive configuration
-	•	Injected as files into containers
-	•	Used to customize application behavior
+### ConfigMap
+- Stores non-sensitive configuration
+- Can be injected as files into containers
+- Can be used to customize application behavior
 
-Secret
-	•	Stores sensitive data (e.g., passwords)
-	•	Injected into containers as environment variables
-	•	Avoids hardcoding secrets in YAML files
+### Secret
+- Stores sensitive data such as passwords
+- Can be injected into containers as environment variables
+- Helps avoid hardcoding sensitive values in YAML files
 
-⸻
+---
 
-Steps Performed
+## Steps Performed
 
-1. Create Deployment
-	•	3 nginx Pods
-	•	Managed by Kubernetes
+### 1. Create Deployment
+- Created 3 nginx Pods
+- Managed them with a Kubernetes Deployment
 
-2. Expose Service
-	•	NodePort created
-	•	Accessible via browser
+### 2. Expose Service
+- Created a NodePort Service
+- Made the application accessible from the browser
 
-3. Create ConfigMap
-	•	Stores custom HTML (index.html)
-	•	Mounted into nginx container
+### 3. Create ConfigMap
+- Stored custom HTML content in a ConfigMap
+- Mounted it into the nginx container
 
-4. Create Secret
-	•	Stores database password (DB_PASSWORD)
-	•	Injected as environment variable
+### 4. Create Secret
+- Stored a database password in a Secret
+- Injected it into the container as an environment variable
 
-5. Update Deployment
-	•	Mount ConfigMap as volume
-	•	Inject Secret into container
+### 5. Update Deployment
+- Mounted the ConfigMap as a volume
+- Injected the Secret into the container
+- Verified the application still worked correctly
 
-⸻
+---
 
-Access Application
-        kubectl get services
-        
+## Access Application
+
+Run:
+
+```bash
+kubectl get services
+```
+
 Open in browser:
-        http://localhost:<NodePort>
 
-Result
-	•	Web page displays:
-        Hello from ConfigMap
+```text
+http://localhost:<NodePort>
+```
 
-    •   Inside container:
-        echo $DB_PASSWORD
+---
 
-    •	Output:  
-        mysecret123
+## Result
 
-Verification
-        for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
+The web page displays:
 
-Cleanup
-        kubectl delete -f nginx-deployment.yaml
-        kubectl delete -f nginx-service.yaml
-        kubectl delete -f nginx-config.yaml
-        kubectl delete secret db-secret
+```text
+Hello from ConfigMap
+```
 
-Key Learnings
-	•	Pods are ephemeral and managed by Deployments
-	•	Services provide stable access and load balancing
-	•	ConfigMaps manage non-sensitive configuration
-	•	Secrets handle sensitive data securely (better than plain text)
-	•	Incorrect ConfigMap keys can break Pod startup
-	•	Kubernetes maintains application availability during failures
+Inside the container:
 
-Real DevOps Insight
+```bash
+echo $DB_PASSWORD
+```
+
+Output:
+
+```text
+mysecret123
+```
+
+---
+
+## Verification
+
+```bash
+for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
+```
+
+---
+
+## Cleanup
+
+```bash
+kubectl delete -f nginx-deployment.yaml
+kubectl delete -f nginx-service.yaml
+kubectl delete -f nginx-config.yaml
+kubectl delete secret db-secret
+```
+
+---
+
+## Key Learnings
+
+- Pods are ephemeral and managed by Deployments
+- Services provide stable access and load balancing
+- ConfigMaps manage non-sensitive configuration
+- Secrets handle sensitive data better than plain text in manifests
+- Incorrect ConfigMap keys can break Pod startup
+- Kubernetes maintains application availability during failures
+
+---
+
+## Real DevOps Insight
 
 This lab demonstrates real-world practices:
-	•	Infrastructure is defined declaratively using YAML
-	•	Configuration and secrets are separated from application code
-	•	Applications are scalable and fault-tolerant
-	•	Sensitive data should never be hardcoded
-	•	Debugging Kubernetes errors is a critical DevOps skill
+
+- Infrastructure is defined declaratively using YAML
+- Configuration and secrets are separated from application code
+- Applications are scalable and fault-tolerant
+- Sensitive data should not be hardcoded
+- Debugging Kubernetes errors is a critical DevOps skill
