@@ -36,6 +36,7 @@ User → Service (NodePort) → Load Balancer → Pods (nginx)
 ### Secret
 - Stores sensitive data such as passwords
 - Can be injected into containers as environment variables
+- Can also be mounted as files inside containers
 - Helps avoid hardcoding sensitive values in YAML files
 
 ---
@@ -52,16 +53,19 @@ User → Service (NodePort) → Load Balancer → Pods (nginx)
 
 ### 3. Create ConfigMap
 - Stored custom HTML content in a ConfigMap
-- Mounted it into the nginx container
+- Mounted it into the nginx container at:
+  /usr/share/nginx/html
 
 ### 4. Create Secret
-- Stored a database password in a Secret
-- Injected it into the container as an environment variable
+- Stored a database password in a Secret:
+  DB_PASSWORD=mysecret123
 
 ### 5. Update Deployment
 - Mounted the ConfigMap as a volume
-- Injected the Secret into the container
-- Verified the application still worked correctly
+- Injected the Secret as:
+  - Environment variable (DB_PASSWORD)
+  - File inside container at:
+    /etc/secrets/DB_PASSWORD
 
 ---
 
@@ -69,15 +73,11 @@ User → Service (NodePort) → Load Balancer → Pods (nginx)
 
 Run:
 
-```bash
 kubectl get services
-```
 
 Open in browser:
 
-```text
 http://localhost:<NodePort>
-```
 
 ---
 
@@ -85,40 +85,40 @@ http://localhost:<NodePort>
 
 The web page displays:
 
-```text
 Hello from ConfigMap
-```
 
-Inside the container:
+Inside the container (environment variable):
 
-```bash
 echo $DB_PASSWORD
-```
 
 Output:
 
-```text
 mysecret123
-```
+
+Inside the container (file-based secret):
+
+cat /etc/secrets/DB_PASSWORD
+
+Output:
+
+mysecret123
 
 ---
 
 ## Verification
 
-```bash
+Test load balancing:
+
 for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
-```
 
 ---
 
 ## Cleanup
 
-```bash
 kubectl delete -f nginx-deployment.yaml
 kubectl delete -f nginx-service.yaml
 kubectl delete -f nginx-config.yaml
 kubectl delete secret db-secret
-```
 
 ---
 
@@ -128,6 +128,7 @@ kubectl delete secret db-secret
 - Services provide stable access and load balancing
 - ConfigMaps manage non-sensitive configuration
 - Secrets handle sensitive data better than plain text in manifests
+- Secrets can be used as environment variables or mounted as files
 - Incorrect ConfigMap keys can break Pod startup
 - Kubernetes maintains application availability during failures
 
@@ -140,5 +141,5 @@ This lab demonstrates real-world practices:
 - Infrastructure is defined declaratively using YAML
 - Configuration and secrets are separated from application code
 - Applications are scalable and fault-tolerant
-- Sensitive data should not be hardcoded
+- Sensitive data should never be hardcoded
 - Debugging Kubernetes errors is a critical DevOps skill
