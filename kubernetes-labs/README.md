@@ -1,123 +1,106 @@
-## Kubernetes Lab — Deployment, Service, and ConfigMap
+Kubernetes Lab — Deployment, Service, ConfigMap, and Secret
 
-## Overview
+Overview
 
 This lab demonstrates how to deploy a scalable nginx application on Kubernetes using:
+	•	Deployment (to manage Pods)
+	•	Service (to expose the application)
+	•	ConfigMap (to manage non-sensitive configuration)
+	•	Secret (to manage sensitive data)
 
-* Deployment (to manage Pods)
-* Service (to expose the application)
-* ConfigMap (to manage configuration)
+⸻
 
----
-
-## Architecture
+Architecture
 
 User → Service (NodePort) → Load Balancer → Pods (nginx)
 
----
+⸻
 
-## Concepts Covered
+Concepts Covered
 
-### Deployment
+Deployment
+	•	Maintains desired number of Pods
+	•	Automatically recreates failed Pods
+	•	Supports rolling updates
 
-* Maintains desired number of Pods
-* Automatically recreates failed Pods
-* Supports rolling updates
+Service (NodePort)
+	•	Exposes application externally
+	•	Distributes traffic across Pods
 
-### Service (NodePort)
+ConfigMap
+	•	Stores non-sensitive configuration
+	•	Injected as files into containers
+	•	Used to customize application behavior
 
-* Exposes application externally
-* Distributes traffic across Pods
+Secret
+	•	Stores sensitive data (e.g., passwords)
+	•	Injected into containers as environment variables
+	•	Avoids hardcoding secrets in YAML files
 
-### ConfigMap
+⸻
 
-* Stores configuration outside containers
-* Injects data into Pods
-* Enables dynamic updates without rebuilding images
+Steps Performed
 
----
+1. Create Deployment
+	•	3 nginx Pods
+	•	Managed by Kubernetes
 
-## Steps Performed
+2. Expose Service
+	•	NodePort created
+	•	Accessible via browser
 
-### 1. Create Deployment
+3. Create ConfigMap
+	•	Stores custom HTML (index.html)
+	•	Mounted into nginx container
 
-* 3 nginx Pods
-* Managed by Kubernetes
+4. Create Secret
+	•	Stores database password (DB_PASSWORD)
+	•	Injected as environment variable
 
-### 2. Expose Service
+5. Update Deployment
+	•	Mount ConfigMap as volume
+	•	Inject Secret into container
 
-* NodePort created
-* Accessible via browser
+⸻
 
-### 3. Create ConfigMap
-
-* Stores custom HTML response
-
-### 4. Mount ConfigMap
-
-* Overrides default nginx page
-* Ensures all Pods serve the same content
-
----
-
-## Access Application
-
-```bash
-kubectl get services
-```
-
+Access Application
+        kubectl get services
+        
 Open in browser:
+        http://localhost:<NodePort>
 
-```text
-http://localhost:<NodePort>
-```
+Result
+	•	Web page displays:
+        Hello from ConfigMap
 
----
+    •   Inside container:
+        echo $DB_PASSWORD
 
-## Result
+    •	Output:  
+        mysecret123
 
-All Pods return:
+Verification
+        for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
 
-```text
-Hello from ConfigMap
-```
+Cleanup
+        kubectl delete -f nginx-deployment.yaml
+        kubectl delete -f nginx-service.yaml
+        kubectl delete -f nginx-config.yaml
+        kubectl delete secret db-secret
 
----
+Key Learnings
+	•	Pods are ephemeral and managed by Deployments
+	•	Services provide stable access and load balancing
+	•	ConfigMaps manage non-sensitive configuration
+	•	Secrets handle sensitive data securely (better than plain text)
+	•	Incorrect ConfigMap keys can break Pod startup
+	•	Kubernetes maintains application availability during failures
 
-## Verification
+Real DevOps Insight
 
-```bash
-for i in {1..10}; do curl http://localhost:<NodePort>; echo ""; done
-```
-
----
-
-## Cleanup
-
-```bash
-kubectl delete -f nginx-deployment.yaml
-kubectl delete -f nginx-service.yaml
-kubectl delete -f nginx-config.yaml
-```
-
----
-
-## Key Learnings
-
-* Pods are ephemeral and independent
-* Services provide stable access and load balancing
-* ConfigMaps separate configuration from application
-* Manual changes inside Pods are not persistent
-* Kubernetes enforces desired state automatically
-
----
-
-## Real DevOps Insight
-
-This lab reflects a real-world pattern:
-
-* Infrastructure defined as code (YAML)
-* Configuration externalized (ConfigMap)
-* Applications are scalable and resilient
-* Everything is version-controlled in GitHub
-
+This lab demonstrates real-world practices:
+	•	Infrastructure is defined declaratively using YAML
+	•	Configuration and secrets are separated from application code
+	•	Applications are scalable and fault-tolerant
+	•	Sensitive data should never be hardcoded
+	•	Debugging Kubernetes errors is a critical DevOps skill
