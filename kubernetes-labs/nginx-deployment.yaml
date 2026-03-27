@@ -17,6 +17,12 @@ spec:
         image: nginx:1.25
         ports:
         - containerPort: 80
+        env:
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-secret
+              key: DB_PASSWORD
         volumeMounts:
         - name: nginx-config-volume
           mountPath: /usr/share/nginx/html
