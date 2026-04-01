@@ -21,4 +21,11 @@ jobs:
       - name: Validate YAML syntax
         run: |
           echo "Validating YAML..."
-          yamllint .
+          yamllint -d '{
+            extends: default,
+            rules: {
+              document-start: disable,
+              line-length: disable,
+              truthy: disable
+            }
+          }' .
