@@ -14,20 +14,21 @@ spec:
         app: web
     spec:
       containers:
-      - name: nginx
-        image: nginx
-        ports:
-        - containerPort: 80
-          name: web
-        volumeMounts:
-        - name: web-storage
-          mountPath: /usr/share/nginx/html
+        - name: nginx
+          image: nginx
+          ports:
+            - containerPort: 80
+              name: web
+          volumeMounts:
+            - name: web-storage
+              mountPath: /usr/share/nginx/html
   volumeClaimTemplates:
-  - metadata:
-      name: web-storage
-    spec:
-      accessModes: ["ReadWriteOnce"]
-      resources:
-        requests:
-          storage: 1Gi
+    - metadata:
+        name: web-storage
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 1Gi
         
