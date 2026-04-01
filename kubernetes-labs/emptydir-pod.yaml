@@ -4,11 +4,11 @@ metadata:
   name: emptydir-demo
 spec:
   containers:
-  - name: nginx
-    image: nginx
-    volumeMounts:
-    - name: shared-data
-      mountPath: /data
+    - name: nginx
+      image: nginx
+      volumeMounts:
+        - name: cache-volume
+          mountPath: /data
   volumes:
-  - name: shared-data
-    emptyDir: {}
+    - name: cache-volume
+      emptyDir: {}
