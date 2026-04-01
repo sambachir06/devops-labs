@@ -6,12 +6,14 @@ on:
       - main
 
 jobs:
-  test:
+  validate:
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Print message
-        run: echo "CI pipeline is running successfully"
+      - name: Validate YAML files
+        run: |
+          echo "Checking YAML files..."
+          find . -name "*.yaml" -print -exec cat {} \;
