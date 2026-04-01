@@ -6,11 +6,11 @@ metadata:
     app: probe-demo
 spec:
   containers:
-  - name: nginx
-    image: nginx
-    readinessProbe:
-      httpGet:
-        path: /
-        port: 80
-      initialDelaySeconds: 5
-      periodSeconds: 5
+    - name: nginx
+      image: nginx
+      readinessProbe:
+        httpGet:
+          path: /
+          port: 80
+        initialDelaySeconds: 5
+        periodSeconds: 5
