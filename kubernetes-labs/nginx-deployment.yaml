@@ -4,14 +4,14 @@ metadata:
   name: my-nginx
 spec:
   replicas: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxUnavailable: 0
-      maxSurge: 1
   selector:
     matchLabels:
       app: my-nginx
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   template:
     metadata:
       labels:
@@ -19,7 +19,7 @@ spec:
     spec:
       containers:
         - name: nginx
-          image: nginx:1.28
+          image: ghcr.io/sambachir06/my-nginx-app:latest
           ports:
             - containerPort: 80
           resources:
@@ -29,22 +29,3 @@ spec:
             limits:
               cpu: "500m"
               memory: "128Mi"
-          env:
-            - name: DB_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: db-secret
-                  key: DB_PASSWORD
-          volumeMounts:
-            - name: nginx-config-volume
-              mountPath: /usr/share/nginx/html
-            - name: secret-volume
-              mountPath: /etc/secrets
-              readOnly: true
-      volumes:
-        - name: nginx-config-volume
-          configMap:
-            name: nginx-config
-        - name: secret-volume
-          secret:
-            secretName: db-secret
