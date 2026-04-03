@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  validate:
+  validate-build-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -34,3 +34,12 @@ jobs:
       - name: Build Docker image
         run: |
           docker build -t my-nginx-app docker-labs/my-nginx-app
+
+      - name: Run container
+        run: |
+          docker run -d -p 8080:80 --name test-container my-nginx-app
+          sleep 5
+
+      - name: Test application
+        run: |
+          curl http://localhost:8080 | grep "Hello from CI-built Docker image"
