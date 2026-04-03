@@ -30,3 +30,7 @@ jobs:
               new-line-at-end-of-file: disable
             }
           }' .
+
+      - name: Build Docker image
+        run: |
+          docker build -t my-nginx-app docker-labs/my-nginx-app
