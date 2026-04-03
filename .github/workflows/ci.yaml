@@ -5,8 +5,12 @@ on:
     branches:
       - main
 
+permissions:
+  contents: read
+  packages: write
+
 jobs:
-  validate-build-test:
+  validate-build-test-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -31,15 +35,22 @@ jobs:
             }
           }' .
 
+      - name: Log in to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
+
       - name: Build Docker image
         run: |
-          docker build -t my-nginx-app docker-labs/my-nginx-app
+          docker build -t ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest docker-labs/my-nginx-app
 
       - name: Run container
         run: |
-          docker run -d -p 8080:80 --name test-container my-nginx-app
+          docker run -d -p 8080:80 --name test-container ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
           sleep 5
 
       - name: Test application
         run: |
           curl http://localhost:8080 | grep "Hello from CI-built Docker image"
+
+      - name: Push image to GHCR
+        run: |
+          docker push ghcr.io/${{ github.repository_owner }}/my-nginx-app:latest
